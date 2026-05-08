@@ -149,6 +149,135 @@ const links = [
   ["entropy", "quantum"],
 ];
 
+const conceptDetails = {
+  momentum: {
+    level: "Foundation",
+    time: "8 min",
+    model: "Closed system",
+    intuition: "Momentum is the motion a system can trade during an interaction.",
+    example: "Collisions, recoil, rockets, sports impacts, and particle scattering.",
+    variables: [
+      ["p", "momentum, a vector with direction"],
+      ["m", "mass in kilograms"],
+      ["v", "velocity in meters per second"],
+    ],
+    prompt: "Draw a boundary around two colliding carts. Which forces are internal, and what momentum should stay constant?",
+  },
+  force: {
+    level: "Foundation",
+    time: "9 min",
+    model: "Particle model",
+    equation: "sum F = m a",
+    units: "force in N, mass in kg, acceleration in m/s^2",
+    intuition: "Forces are interactions. The net force is the part that changes velocity.",
+    example: "Elevators, friction, tension, normal force, thrust, and orbital motion.",
+    variables: [
+      ["sum F", "vector sum of all external forces"],
+      ["m", "inertial mass"],
+      ["a", "acceleration vector"],
+    ],
+    prompt: "Sketch every force first. Only then add them to find the net force.",
+  },
+  energy: {
+    level: "Foundation",
+    time: "10 min",
+    model: "System bookkeeping",
+    equation: "E total = K + U + E internal",
+    intuition: "Energy tells you what changes are possible and what must be paid for.",
+    example: "Roller coasters, batteries, heating, springs, engines, and orbital escape.",
+    variables: [
+      ["K", "kinetic energy of motion"],
+      ["U", "potential energy from configuration"],
+      ["E int", "thermal, chemical, or microscopic energy"],
+    ],
+    prompt: "What enters or leaves the system as work, heat, radiation, or matter?",
+  },
+  wave: {
+    level: "Foundation",
+    time: "8 min",
+    model: "Oscillation pattern",
+    equation: "v = f lambda",
+    intuition: "A wave is a rule for how a disturbance repeats and travels.",
+    example: "Sound, water waves, seismic waves, light, and matter waves.",
+    variables: [
+      ["v", "wave speed"],
+      ["f", "frequency"],
+      ["lambda", "wavelength"],
+    ],
+    prompt: "If frequency increases while wave speed stays fixed, what happens to wavelength?",
+  },
+  field: {
+    level: "Core",
+    time: "9 min",
+    model: "Local interaction",
+    intuition: "A field lets each point in space carry instructions for how a test object would respond.",
+    example: "Electric fields near charges, gravitational fields near planets, and magnetic fields near currents.",
+    variables: [
+      ["F", "force on the test charge"],
+      ["q", "test charge"],
+      ["E", "electric field vector"],
+    ],
+    prompt: "At a chosen point, what direction would a positive test charge accelerate?",
+  },
+  entropy: {
+    level: "Core",
+    time: "11 min",
+    model: "Microstate counting",
+    equation: "S = k ln Omega",
+    intuition: "Entropy counts how many hidden microscopic stories fit what you can observe.",
+    example: "Gas expansion, heat flow, engines, mixing, and information erasure.",
+    variables: [
+      ["S", "entropy"],
+      ["k", "Boltzmann constant"],
+      ["Omega", "number of compatible microstates"],
+    ],
+    prompt: "Which macrostate can be realized in more microscopic ways?",
+  },
+  quantum: {
+    level: "Advanced",
+    time: "13 min",
+    model: "Probability amplitude",
+    equation: "i hbar d psi / dt = H psi",
+    units: "state evolution set by the energy operator H",
+    intuition: "The state is a compact prediction engine for what measurements can return.",
+    example: "Electron orbitals, tunneling, spin measurements, spectra, and quantum devices.",
+    variables: [
+      ["psi", "quantum state"],
+      ["H", "Hamiltonian or energy operator"],
+      ["hbar", "reduced Planck constant"],
+    ],
+    prompt: "What observable is being measured, and what distribution of outcomes does the state predict?",
+  },
+  relativity: {
+    level: "Advanced",
+    time: "12 min",
+    model: "Reference frames",
+    equation: "E = m c^2",
+    units: "energy in J, mass in kg, c in m/s",
+    intuition: "Observers can disagree about distances and times while agreeing on spacetime intervals.",
+    example: "GPS clocks, particle lifetimes, black holes, accelerators, and cosmology.",
+    variables: [
+      ["E", "energy"],
+      ["m", "mass"],
+      ["c", "speed of light in vacuum"],
+    ],
+    prompt: "Which observer is measuring which clock or ruler?",
+  },
+  gravity: {
+    level: "Core",
+    time: "10 min",
+    model: "Scale dependent",
+    intuition: "Gravity is weak locally but dominates at astronomical scale because mass mostly adds.",
+    example: "Falling objects, tides, orbits, galaxies, black holes, and gravitational waves.",
+    variables: [
+      ["G", "gravitational constant"],
+      ["m1, m2", "interacting masses"],
+      ["r", "center-to-center separation"],
+    ],
+    prompt: "Is a Newtonian model enough, or do speed, curvature, or precision demand relativity?",
+  },
+};
+
 const state = {
   activeConcept: concepts[0],
   activeDomain: "all",
@@ -165,6 +294,7 @@ const ctx = canvas.getContext("2d");
 const nodeLayer = document.querySelector("#nodeLayer");
 const searchInput = document.querySelector("#conceptSearch");
 const inspector = document.querySelector(".inspector");
+const detailsToggle = document.querySelector("#detailsToggle");
 
 function detectDevice() {
   const coarse = matchMedia("(pointer: coarse)").matches;
@@ -324,18 +454,40 @@ function drawParticles(rect) {
 }
 
 function selectConcept(concept) {
+  const details = { ...concept, ...(conceptDetails[concept.id] || {}) };
   state.activeConcept = concept;
   document.querySelector("#conceptDomain").textContent = concept.domain;
   document.querySelector("#conceptTitle").textContent = concept.name;
-  document.querySelector("#conceptSummary").textContent = concept.summary;
-  document.querySelector("#conceptEquation").textContent = concept.equation;
-  document.querySelector("#conceptUnits").textContent = concept.units;
-  document.querySelector("#conceptGuardrail").textContent = concept.guardrail;
+  document.querySelector("#conceptLevel").textContent = details.level || "Core";
+  document.querySelector("#conceptTime").textContent = details.time || "8 min";
+  document.querySelector("#conceptModel").textContent = details.model || "Model";
+  document.querySelector("#conceptSummary").textContent = details.summary;
+  document.querySelector("#conceptEquation").textContent = details.equation;
+  document.querySelector("#conceptUnits").textContent = details.units;
+  document.querySelector("#conceptGuardrail").textContent = details.guardrail;
+  document.querySelector("#conceptIntuition").textContent = details.intuition || "Build the idea from the system, the quantities, and the model limits.";
+  document.querySelector("#conceptExample").textContent = details.example || "Used across experiments, simulations, and real systems.";
+  document.querySelector("#conceptPrompt").textContent = details.prompt || "Identify the system, variables, units, and assumptions before calculating.";
+  renderVariables(details.variables || [["model", "Define variables, units, and assumptions before using the equation."]]);
   document.querySelector("#mapHint").textContent = `${concept.name} opened. Related paths are lit across the atlas.`;
-  inspector.classList.add("open");
   renderRelated(concept);
   renderNodes();
   renderAtlasFrame();
+}
+
+function renderVariables(variables) {
+  const variableList = document.querySelector("#variableList");
+  variableList.innerHTML = "";
+  variables.forEach(([symbol, description]) => {
+    const row = document.createElement("div");
+    row.className = "variable-row";
+    const key = document.createElement("strong");
+    key.textContent = symbol;
+    const value = document.createElement("span");
+    value.textContent = description;
+    row.append(key, value);
+    variableList.appendChild(row);
+  });
 }
 
 function renderRelated(concept) {
@@ -402,7 +554,13 @@ function bindEvents() {
   document.querySelectorAll("input[type='range']").forEach((input) => {
     input.addEventListener("input", updateMomentumLab);
   });
-  inspector.addEventListener("click", () => inspector.classList.toggle("open"));
+  if (detailsToggle) {
+    detailsToggle.addEventListener("click", () => {
+      const collapsed = inspector.classList.toggle("collapsed");
+      detailsToggle.setAttribute("aria-expanded", String(!collapsed));
+      detailsToggle.querySelector("em").textContent = collapsed ? "Show details" : "Hide details";
+    });
+  }
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape") inspector.classList.remove("open");
     if (event.key === "/") {
