@@ -1,6 +1,5 @@
 {
-  "buildCommand": "node build-static.cjs",
-  "outputDirectory": "public",
+  "buildCommand": "npm run build",
   "headers": [
     {
       "source": "/(.*)",
