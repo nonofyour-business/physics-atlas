@@ -1,233 +1,165 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Physics Atlas is an interactive map of physics concepts, equations, simulations, and learning paths."
+      content="Physics Atlas is an interactive, playful physics lab with motion, waves, gravity, light, and quantum demos."
     />
     <title>Physics Atlas</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="shell">
-      <header class="topbar" aria-label="Physics Atlas controls">
-        <a class="brand" href="#atlas" aria-label="Physics Atlas home">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span>
-            <strong>Physics Atlas</strong>
-            <small id="deviceMode">Detecting device</small>
-          </span>
-        </a>
+    <header class="topbar">
+      <a class="brand" href="#lab" aria-label="Physics Atlas home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>
+          <strong>Physics Atlas</strong>
+          <small>interactive field guide</small>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Main sections">
+        <a href="#lab">Lab</a>
+        <a href="#missions">Missions</a>
+        <a href="#atlas">Atlas</a>
+      </nav>
+    </header>
 
-        <label class="search" for="conceptSearch">
-          <span aria-hidden="true">Search</span>
-          <input
-            id="conceptSearch"
-            type="search"
-            autocomplete="off"
-            placeholder="Search momentum, entropy, tunneling..."
-          />
-        </label>
-
-        <nav class="mode-switch" aria-label="View mode">
-          <button class="mode-button active" data-mode="explore" type="button">Explore</button>
-          <button class="mode-button" data-mode="journey" type="button">Journeys</button>
-          <button class="mode-button" data-mode="lab" type="button">Lab</button>
-        </nav>
-      </header>
-
-      <main id="atlas" class="workspace">
-        <aside class="domain-rail" aria-label="Physics domains">
-          <button class="domain-button active" data-domain="all" type="button">
-            <span class="domain-glyph">All</span>
-            <span>Atlas</span>
-          </button>
-          <button class="domain-button" data-domain="mechanics" type="button">
-            <span class="domain-glyph mechanics"></span>
-            <span>Motion</span>
-          </button>
-          <button class="domain-button" data-domain="fields" type="button">
-            <span class="domain-glyph fields"></span>
-            <span>Fields</span>
-          </button>
-          <button class="domain-button" data-domain="waves" type="button">
-            <span class="domain-glyph waves"></span>
-            <span>Waves</span>
-          </button>
-          <button class="domain-button" data-domain="matter" type="button">
-            <span class="domain-glyph matter"></span>
-            <span>Matter</span>
-          </button>
-          <button class="domain-button" data-domain="cosmos" type="button">
-            <span class="domain-glyph cosmos"></span>
-            <span>Cosmos</span>
-          </button>
-        </aside>
-
-        <section class="atlas-stage" aria-labelledby="atlasTitle">
-          <div class="stage-head">
-            <div>
-              <p class="eyebrow">Interactive knowledge surface</p>
-              <h1 id="atlasTitle">Explore physics by moving through the ideas themselves.</h1>
-            </div>
-            <div class="stage-stats" aria-label="Atlas statistics">
-              <span><strong>24</strong> mapped ideas</span>
-              <span><strong>6</strong> study routes</span>
-              <span><strong>SI</strong> units</span>
-            </div>
+    <main>
+      <section class="hero" id="lab" aria-labelledby="hero-title">
+        <canvas id="field-canvas" aria-label="Animated physics field"></canvas>
+        <div class="hero-copy">
+          <p class="eyebrow">Physics that moves when you poke it</p>
+          <h1 id="hero-title">Turn equations into tiny universes.</h1>
+          <p>
+            Launch projectiles, tune waves, bend gravity, split light, and watch
+            the math answer back in real time.
+          </p>
+          <div class="hero-actions">
+            <a class="primary" href="#experiments">Start experimenting</a>
+            <a class="secondary" href="#missions">Pick a challenge</a>
           </div>
-
-          <div class="map-wrap">
-            <canvas id="atlasCanvas" aria-label="Animated physics concept atlas"></canvas>
-            <div id="nodeLayer" class="node-layer" aria-label="Concept nodes"></div>
-            <div class="map-hint" id="mapHint">Drag the field, search a concept, or open a node.</div>
-          </div>
-        </section>
-
-        <aside class="inspector" aria-live="polite" aria-label="Selected concept">
-          <button class="inspector-handle" id="detailsToggle" type="button" aria-expanded="true">
-            <span></span>
-            <strong>Concept dossier</strong>
-            <em>Open details</em>
-          </button>
-
-          <div class="inspector-top">
-            <p class="eyebrow" id="conceptDomain">Mechanics</p>
-            <h2 id="conceptTitle">Momentum</h2>
-            <div class="concept-meta" aria-label="Concept metadata">
-              <span id="conceptLevel">Foundation</span>
-              <span id="conceptTime">8 min</span>
-              <span id="conceptModel">Closed system model</span>
-            </div>
-            <p id="conceptSummary">
-              Momentum tracks how much motion a system carries. In an isolated system, total
-              momentum stays constant even when the motion is exchanged between objects.
-            </p>
-          </div>
-
-          <div class="equation-block">
-            <span>Key model</span>
-            <strong id="conceptEquation">p = mv</strong>
-            <p id="conceptUnits">p in kg m/s, m in kg, v in m/s</p>
-          </div>
-
-          <div class="model-note">
-            <span aria-hidden="true">!</span>
-            <p id="conceptGuardrail">
-              Conservation claims assume the chosen system is isolated from external net force.
-            </p>
-          </div>
-
-          <div class="dossier-grid" aria-label="Concept study notes">
-            <article>
-              <span>Intuition</span>
-              <p id="conceptIntuition">Momentum is the motion a system can trade during an interaction.</p>
-            </article>
-            <article>
-              <span>Where it appears</span>
-              <p id="conceptExample">Collisions, recoil, rockets, sports impacts, and particle scattering.</p>
-            </article>
-          </div>
-
-          <div class="variable-list">
-            <h3>Terms and units</h3>
-            <div id="variableList"></div>
-          </div>
-
-          <div class="mini-lab" aria-label="Momentum model controls">
-            <div class="lab-visual">
-              <span class="mass-dot" id="massDot"></span>
-              <span class="velocity-line" id="velocityLine"></span>
-            </div>
-            <label for="massRange">
-              Mass <output id="massValue">3.0 kg</output>
-            </label>
-            <input id="massRange" type="range" min="1" max="10" value="3" step="0.5" />
-            <label for="velocityRange">
-              Velocity <output id="velocityValue">4.0 m/s</output>
-            </label>
-            <input id="velocityRange" type="range" min="1" max="12" value="4" step="0.5" />
-            <div class="result" id="momentumResult">Momentum: 12.0 kg m/s</div>
-          </div>
-
-          <div class="related">
-            <h3>Next links</h3>
-            <div id="relatedLinks" class="chips"></div>
-          </div>
-
-          <div class="study-prompt">
-            <h3>Study prompt</h3>
-            <p id="conceptPrompt">Choose a system boundary, then decide whether total momentum should stay constant.</p>
-          </div>
-        </aside>
-      </main>
-
-      <section id="journeyPanel" class="panel-band hidden" aria-labelledby="journeyTitle">
-        <div class="section-head">
-          <p class="eyebrow">Guided routes</p>
-          <h2 id="journeyTitle">Choose a path through the atlas.</h2>
         </div>
-        <div class="journey-grid">
+        <aside class="signal-panel" aria-label="Live physics readout">
+          <span>Live readout</span>
+          <strong id="hero-readout">g = 9.8 m/s²</strong>
+          <p id="hero-tip">A steeper launch angle trades horizontal speed for hang time.</p>
+        </aside>
+      </section>
+
+      <section class="experiment-shell" id="experiments" aria-label="Interactive experiments">
+        <div class="section-heading">
+          <p class="eyebrow">Hands-on lab</p>
+          <h2>Five ways to make physics visible.</h2>
+        </div>
+
+        <div class="experiment-grid">
+          <article class="demo-stage" aria-labelledby="demo-title">
+            <div class="demo-tabs" role="tablist" aria-label="Experiment selector">
+              <button class="tab is-active" data-demo="projectile" role="tab" aria-selected="true">Motion</button>
+              <button class="tab" data-demo="waves" role="tab" aria-selected="false">Waves</button>
+              <button class="tab" data-demo="gravity" role="tab" aria-selected="false">Gravity</button>
+              <button class="tab" data-demo="optics" role="tab" aria-selected="false">Light</button>
+              <button class="tab" data-demo="quantum" role="tab" aria-selected="false">Quantum</button>
+            </div>
+            <canvas id="demo-canvas" aria-label="Selected physics experiment animation"></canvas>
+            <div class="demo-caption">
+              <div>
+                <p class="eyebrow" id="demo-kicker">Projectile motion</p>
+                <h3 id="demo-title">Aim the arc.</h3>
+              </div>
+              <strong id="demo-equation">R = v² sin(2θ) / g</strong>
+            </div>
+          </article>
+
+          <aside class="control-panel" aria-label="Experiment controls">
+            <div class="control-copy">
+              <h3 id="control-title">Projectile Motion</h3>
+              <p id="control-description">
+                A projectile keeps its horizontal velocity while gravity steadily
+                changes its vertical velocity.
+              </p>
+            </div>
+            <div class="controls" id="controls"></div>
+            <dl class="metrics" id="metrics"></dl>
+            <div class="fun-fact">
+              <span>Try this</span>
+              <p id="challenge">Find the angle that sends the same launch speed farthest.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="missions" id="missions" aria-labelledby="missions-title">
+        <div class="section-heading">
+          <p class="eyebrow">Friend-impressing missions</p>
+          <h2 id="missions-title">Short challenges with satisfying reveals.</h2>
+        </div>
+        <div class="mission-list">
           <article>
             <span>01</span>
-            <h3>Physics From Zero</h3>
-            <p>Units, vectors, motion, energy, waves, and fields in the order that makes later ideas easier.</p>
-            <ul>
-              <li>Units and dimensions</li>
-              <li>Vectors before forces</li>
-              <li>Energy and momentum as bookkeeping</li>
-            </ul>
+            <h3>Beat the moon cannon</h3>
+            <p>Lower gravity and notice how range grows without changing launch speed.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Classical Mechanics</h3>
-            <p>Build from kinematics to conservation laws, rotation, gravitation, and real model limits.</p>
-            <ul>
-              <li>Free-body diagrams</li>
-              <li>Closed-system reasoning</li>
-              <li>Orbit and rotation models</li>
-            </ul>
+            <h3>Make a standing wave</h3>
+            <p>Match frequency to length until the rope looks like it is breathing in place.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Quantum Foundations</h3>
-            <p>Probability, measurement, quantization, tunneling, and spin without mystical shortcuts.</p>
-            <ul>
-              <li>State, observable, outcome</li>
-              <li>Probability amplitudes</li>
-              <li>Model limits and interpretation</li>
-            </ul>
+            <h3>Find an orbit that survives</h3>
+            <p>Balance sideways speed against gravity so the body keeps missing the center.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Split white light</h3>
+            <p>Change the refractive index and watch colors separate by wavelength.</p>
           </article>
         </div>
       </section>
 
-      <section id="labPanel" class="panel-band hidden" aria-labelledby="labTitle">
-        <div class="section-head">
-          <p class="eyebrow">Visual lab</p>
-          <h2 id="labTitle">Models that say what they assume.</h2>
+      <section class="atlas" id="atlas" aria-labelledby="atlas-title">
+        <div class="section-heading">
+          <p class="eyebrow">Physics atlas</p>
+          <h2 id="atlas-title">Concepts that connect.</h2>
         </div>
-        <div class="lab-grid">
+        <div class="concept-map" aria-label="Physics concept cards">
           <article>
-            <div class="wave-demo" aria-hidden="true"></div>
-            <h3>Wave Interference</h3>
-            <p>Compare amplitude, wavelength, phase, and standing-wave nodes in one synchronized view.</p>
+            <span>Mechanics</span>
+            <h3>Forces explain changes in motion.</h3>
+            <p>Newton's second law links net force to acceleration: F = ma.</p>
           </article>
           <article>
-            <div class="field-demo" aria-hidden="true"></div>
-            <h3>Field Lines</h3>
-            <p>Trace electric-field direction and strength while keeping vectors separate from scalar potential.</p>
+            <span>Energy</span>
+            <h3>Energy is the accounting system.</h3>
+            <p>Kinetic, potential, thermal, and field energy transform but do not vanish.</p>
           </article>
           <article>
-            <div class="orbit-demo" aria-hidden="true"></div>
-            <h3>Orbital Scale</h3>
-            <p>See what changes when a point-mass model stops being a useful approximation.</p>
+            <span>Waves</span>
+            <h3>Patterns carry energy without carrying matter along.</h3>
+            <p>Frequency, wavelength, and speed fit together as v = fλ.</p>
+          </article>
+          <article>
+            <span>Fields</span>
+            <h3>Space can store instructions.</h3>
+            <p>Fields assign a value to each point, telling charges or masses how to respond.</p>
+          </article>
+          <article>
+            <span>Relativity</span>
+            <h3>Measurements depend on motion.</h3>
+            <p>Time and distance adjust so every observer measures the same light speed.</p>
+          </article>
+          <article>
+            <span>Quantum</span>
+            <h3>Small systems predict probabilities.</h3>
+            <p>The wavefunction gives a probability pattern, not a tiny hidden marble path.</p>
           </article>
         </div>
       </section>
-    </div>
+    </main>
 
-    <script type="module" src="/app.js"></script>
+    <script src="./app.js" type="module"></script>
   </body>
 </html>
